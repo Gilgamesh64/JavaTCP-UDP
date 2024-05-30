@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * simple TCP server class that creates a new thread when something connects
+ */
 public class Server extends Thread {
     private int port;
 
-    Server(int port){
+    public Server(int port){
         this.port = port;
     }
     

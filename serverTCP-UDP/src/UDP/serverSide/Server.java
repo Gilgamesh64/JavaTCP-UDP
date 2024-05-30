@@ -6,6 +6,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
+/**
+ * simple UDP server class
+ */
 public class Server extends Thread{
     private DatagramSocket socket;
     private boolean running;

@@ -8,6 +8,10 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+/**
+ * simple UDP client class
+ * @author Gilgamesh64
+ */
 public class Client extends Thread{
     private DatagramSocket socket;
     private InetAddress address;

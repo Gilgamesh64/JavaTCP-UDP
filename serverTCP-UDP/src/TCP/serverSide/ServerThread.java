@@ -8,6 +8,10 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+/**
+ * simple TCP server thread that sends a string when recieved one
+ * @author Gilgamesh64
+ */
 public class ServerThread extends Thread {
     
     private Socket socket;
@@ -28,7 +32,7 @@ public class ServerThread extends Thread {
 
             do {
                 text = reader.readLine();
-                writer.println("Server: " + text + " :)");
+                writer.println(text + " :)");
             } while (!text.equals("bye"));
 
             socket.close();
