@@ -25,7 +25,7 @@ public class ClientMain {
 
         client.stringReceivedEvent().addListener(
             stringReceivedFromServer -> {
-                //gets the recieved string from the socket
+                //gets the received string from the socket
                 System.out.println("String recieved: " + stringReceivedFromServer);
                 sendMessage(System.console().readLine("Enter text: "));
         });
