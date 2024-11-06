@@ -19,13 +19,13 @@ import events.SimpleEvent;
 public class Client extends Thread{
     private Socket socket;
 
-    private final Event<String> stringRecieved = new SimpleEvent<>();
+    private final Event<String> stringReceived = new SimpleEvent<>();
 
-    public Event<String> stringRecievedEvent() {
-        return stringRecieved;
+    public Event<String> stringReceivedEvent() {
+        return stringReceived;
     }
 
-    Client(String hostname, int port){
+    public Client(String hostname, int port){
 
         try {
             socket = new Socket(hostname, port);
@@ -46,7 +46,7 @@ public class Client extends Thread{
 
     @Override
     public void run() {
-        while(socket.isConnected()) readMessage(); //continuosly waits for a message to arrive
+        while(socket.isConnected()) readMessage(); //continuously waits for a message to arrive
     }
 
     /**
@@ -57,8 +57,8 @@ public class Client extends Thread{
             InputStream input = socket.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(input));
  
-            String recieved = reader.readLine();
-            stringRecievedEvent().trigger(recieved); //triggers an event from the outside to recieve a message
+            String received = reader.readLine();
+            stringReceivedEvent().trigger(received); //triggers an event from the outside to receive a message
 
         }catch(IOException e){
             System.out.println("I/O error: " + e.getMessage());

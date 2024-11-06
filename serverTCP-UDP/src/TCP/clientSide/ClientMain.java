@@ -1,6 +1,5 @@
 package TCP.clientSide;
 
-import java.io.Console;
 import events.Event;
 import events.SimpleEvent;
 
@@ -22,21 +21,20 @@ public class ClientMain {
 
         Client client = new Client("localhost", 5050);
 
-        sendMessage();
+        sendMessage(System.console().readLine("Enter text: "));
 
-        client.stringRecievedEvent().addListener(
-            user -> {
+        client.stringReceivedEvent().addListener(
+            stringReceivedFromServer -> {
                 //gets the recieved string from the socket
-                System.out.println("String recieved: " + user);
-                sendMessage();
+                System.out.println("String recieved: " + stringReceivedFromServer);
+                sendMessage(System.console().readLine("Enter text: "));
         });
 
         client.start();
     }
-    private static void sendMessage(){
+    private static void sendMessage(String s){
         //sends a string to the socket
-        Console console = System.console();
 
-        sendStringEvent().trigger(console.readLine("Enter text: "));
+        sendStringEvent().trigger(s);
     }
 }
