@@ -39,7 +39,9 @@ public class Client extends Thread{
         
         ClientMain.sendStringEvent().addListener(
             message -> { //event triggered from the outside to send a message
-                if(message.equals("close")) dispose();
+                if(message.equals("close")){
+                    dispose();
+                } 
                 else sendMessage(message);
         });
     }
@@ -57,12 +59,11 @@ public class Client extends Thread{
             InputStream input = socket.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(input));
  
-            String received = reader.readLine();
-            stringReceivedEvent().trigger(received); //triggers an event from the outside to receive a message
+            String recieved = reader.readLine();
+            stringReceivedEvent().trigger(recieved); //triggers an event from the outside to receive a message
 
         }catch(IOException e){
             System.out.println("I/O error: " + e.getMessage());
-            dispose();
         }    
     }
 
@@ -82,7 +83,6 @@ public class Client extends Thread{
  
         } catch (IOException ex) {
             System.out.println("I/O error: " + ex.getMessage());
-            dispose();
         }
     }
 
