@@ -46,7 +46,7 @@ public class Client extends Thread{
 
     @Override
     public void run() {
-        while(socket.isConnected()) readMessage(); //continuously waits for a message to arrive
+        while(socket != null) readMessage(); //continuously waits for a message to arrive
     }
 
     /**
@@ -62,6 +62,7 @@ public class Client extends Thread{
 
         }catch(IOException e){
             System.out.println("I/O error: " + e.getMessage());
+            dispose();
         }    
     }
 
@@ -81,12 +82,14 @@ public class Client extends Thread{
  
         } catch (IOException ex) {
             System.out.println("I/O error: " + ex.getMessage());
+            dispose();
         }
     }
 
     public void dispose(){
         try {
             socket.close();
+            socket = null;
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -33,12 +33,20 @@ public class ServerThread extends Thread {
             do {
                 text = reader.readLine();
                 writer.println(text + " :)");
-            } while (!text.equals("bye"));
+            } while (!text.equals("close"));
 
-            socket.close();
+            close();
         } catch (IOException ex) {
-            System.out.println("Server exception: " + ex.getMessage());
-            ex.printStackTrace();
+            close();
+            return;
+        }
+    }
+    private void close(){
+        try {
+            socket.close();
+            System.out.println("Closing Socket");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
