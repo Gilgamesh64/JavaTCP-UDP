@@ -17,7 +17,5 @@ public class ClientMain {
                 System.out.println("String received: " + stringReceivedFromServer));
         
         client.send(System.console().readLine("Enter text: "));
-
-        client.dispose();
     }
 }

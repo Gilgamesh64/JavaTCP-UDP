@@ -2,12 +2,9 @@ package TCP.clientSide;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.function.Consumer;
 
 /**
@@ -15,72 +12,49 @@ import java.util.function.Consumer;
  * @see ClientMain
  * @author Gilgamesh64
  */
-public class Client implements Runnable{
-    private Socket socket;
+public class Client implements Runnable {
 
-    private Consumer<String> onReceive;
+    private final Socket socket;
+    private final BufferedReader reader;
+    private final PrintWriter writer;
 
-    public Client(String hostname, int port){
+    private Consumer<String> onReceive = s -> {};
+    private Thread thread;
 
-        try { socket = new Socket(hostname, port); }
-        catch (Exception e) { e.printStackTrace(); }
-        
+    public Client(String hostname, int port) {
+        try {
+            socket = new Socket(hostname, port);
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            writer = new PrintWriter(socket.getOutputStream(), true);
+        } catch (IOException e) {throw new RuntimeException(e);}
     }
 
     @Override
     public void run() {
-        while(socket != null) readMessage(); //continuously waits for a message to arrive
+        try {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                onReceive.accept(line);
+            }
+        } catch (IOException e) {System.out.println("Connection closed: " + e.getMessage());
+        } finally {dispose();}
     }
 
     public void start() {
-        Thread.startVirtualThread(this);
+        thread = Thread.startVirtualThread(this);
     }
 
-    /**
-     * reads the input buffer waiting for a message
-     */
-    private void readMessage(){
-        try{
-            InputStream input = socket.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
- 
-            String recieved = reader.readLine();
-            onReceive.accept(recieved);
-
-        }catch(IOException e){
-            System.out.println("I/O error: " + e.getMessage());
-        }    
+    public void send(String text) {
+        writer.println(text);
     }
 
-    /**
-     * sends a message on the socket
-     * @param text message to send
-     */
-    public void send(String text){
-        try {
-            OutputStream output = socket.getOutputStream();
-            PrintWriter writer = new PrintWriter(output, true);
-            
-            writer.println(text);
-
-        } catch (UnknownHostException ex) {
-            System.out.println("Server not found: " + ex.getMessage());
- 
-        } catch (IOException ex) {
-            System.out.println("I/O error: " + ex.getMessage());
-        }
-    }
-
-    public void onReceive(Consumer<String> c){
+    public void onReceive(Consumer<String> c) {
         onReceive = c;
     }
 
-    public void dispose(){
-        try {
-            socket.close();
-            socket = null;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void dispose() {
+        try {socket.close();} catch (IOException ignored) {}
+
+        if (thread != null) thread.interrupt();
     }
 }
