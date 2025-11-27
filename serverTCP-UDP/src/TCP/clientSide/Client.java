@@ -8,8 +8,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import events.Event;
-import events.SimpleEvent;
+import java.util.function.Consumer;
 
 /**
  * client class to manage a TCP socket
@@ -19,16 +18,13 @@ import events.SimpleEvent;
 public class Client extends Thread{
     private Socket socket;
 
-    private final Event<String> stringReceived = new SimpleEvent<>();
-
-    public Event<String> stringReceivedEvent() {
-        return stringReceived;
-    }
+    private Consumer<String> onReceive;
 
     public Client(String hostname, int port){
 
         try {
             socket = new Socket(hostname, port);
+            this.start();
 
         } catch (UnknownHostException e) { 
             e.printStackTrace();
@@ -36,14 +32,6 @@ public class Client extends Thread{
         } catch (IOException e) { 
             e.printStackTrace(); 
         }
-        
-        ClientMain.sendStringEvent().addListener(
-            message -> { //event triggered from the outside to send a message
-                if(message.equals("close")){
-                    dispose();
-                } 
-                else sendMessage(message);
-        });
     }
 
     @Override
@@ -60,7 +48,7 @@ public class Client extends Thread{
             BufferedReader reader = new BufferedReader(new InputStreamReader(input));
  
             String recieved = reader.readLine();
-            stringReceivedEvent().trigger(recieved); //triggers an event from the outside to receive a message
+            onReceive.accept(recieved);
 
         }catch(IOException e){
             System.out.println("I/O error: " + e.getMessage());
@@ -71,7 +59,7 @@ public class Client extends Thread{
      * sends a message on the socket
      * @param text message to send
      */
-    private void sendMessage(String text){
+    public void send(String text){
         try {
             OutputStream output = socket.getOutputStream();
             PrintWriter writer = new PrintWriter(output, true);
@@ -84,6 +72,10 @@ public class Client extends Thread{
         } catch (IOException ex) {
             System.out.println("I/O error: " + ex.getMessage());
         }
+    }
+
+    public void onReceive(Consumer<String> c){
+        onReceive = c;
     }
 
     public void dispose(){
