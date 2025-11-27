@@ -1,0 +1,6 @@
+{
+    "java.project.sourcePaths": [
+        "serverTCP-UDP\\src"
+    ],
+    "java.project.referencedLibraries": []
+}

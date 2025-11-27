@@ -15,28 +15,25 @@ import java.util.function.Consumer;
  * @see ClientMain
  * @author Gilgamesh64
  */
-public class Client extends Thread{
+public class Client implements Runnable{
     private Socket socket;
 
     private Consumer<String> onReceive;
 
     public Client(String hostname, int port){
 
-        try {
-            socket = new Socket(hostname, port);
-            this.start();
-
-        } catch (UnknownHostException e) { 
-            e.printStackTrace();
-
-        } catch (IOException e) { 
-            e.printStackTrace(); 
-        }
+        try { socket = new Socket(hostname, port); }
+        catch (Exception e) { e.printStackTrace(); }
+        
     }
 
     @Override
     public void run() {
         while(socket != null) readMessage(); //continuously waits for a message to arrive
+    }
+
+    public void start() {
+        Thread.startVirtualThread(this);
     }
 
     /**
